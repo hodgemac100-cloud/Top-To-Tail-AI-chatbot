@@ -2,7 +2,13 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-app.use(cors());
+
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
+
 app.use(express.json());
 
 const SYSTEM_PROMPT = `You are a warm, friendly and knowledgeable AI assistant for Top To Tail Animal Physiotherapy, a specialist animal physiotherapy practice based in Perth, Western Australia.
@@ -43,18 +49,22 @@ TONE:
 - Keep replies concise — 3 to 5 sentences unless more detail is needed
 - Never use clinical jargon
 - Always end by encouraging the user to book a free assessment
-- Use language like "your animal", "your dog", "your horse" to make it personal
+- Use language like your animal, your dog, your horse to make it personal
 
 IMPORTANT:
 - Never give specific medical diagnoses
 - Never recommend medications
 - Never replace veterinary advice
 - Always suggest they consult their vet for medical concerns while positioning physiotherapy as a complementary service
-- If asked about pricing, say treatment plans vary by animal and condition and encourage them to get in touch for a personalised quote`;
+- If asked about pricing say treatment plans vary by animal and condition and encourage them to get in touch for a personalised quote`;
 
 app.post('/chat', async (req, res) => {
   try {
     const { messages } = req.body;
+
+    if (!messages || !Array.isArray(messages)) {
+      return res.status(400).json({ reply: 'Invalid request format.' });
+    }
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -72,10 +82,16 @@ app.post('/chat', async (req, res) => {
     });
 
     const data = await response.json();
-    res.json({ reply: data.content?.[0]?.text || "Sorry, I couldn't get a response right now. Please try again." });
+
+    if (data.error) {
+      console.error('Anthropic API error:', data.error);
+      return res.status(500).json({ reply: 'Sorry I could not get a response right now. Please try again.' });
+    }
+
+    res.json({ reply: data.content?.[0]?.text || 'Sorry I could not get a response right now.' });
   } catch (err) {
-    console.error('Error:', err);
-    res.status(500).json({ reply: "Something went wrong. Please try again in a moment." });
+    console.error('Server error:', err);
+    res.status(500).json({ reply: 'Something went wrong. Please try again in a moment.' });
   }
 });
 
