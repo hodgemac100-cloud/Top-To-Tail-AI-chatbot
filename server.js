@@ -1,10 +1,10 @@
 const express = require('express');                                           
   const cors = require('cors');                                                 
-   
+
   const app = express();                                                        
-                  
-  app.use(cors({
-    origin: '*',
+   
+  app.use(cors({                                                                
+    origin: '*',  
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type']                                            
   }));
@@ -27,10 +27,10 @@ const express = require('express');
   book a free assessment or get in touch.
                                                                                 
   THE BUSINESS:   
-  Name: Head To Tail Animal Physiotherapy                                       
-  Owner / Therapist: Sindy Rollins
-  Email: info@headtotailphysio.com.au                                           
-  Website: headtotailphysio.com.au
+  Name: Head To Tail Animal Physiotherapy
+  Owner / Therapist: Sindy Rollins                                              
+  Email: info@headtotailphysio.com.au
+  Website: headtotailphysio.com.au                                              
   Location: Perth, Western Australia — fully mobile service, Sindy comes to you 
   (home, stable, or property)                                                   
   Service area: Perth and surrounding regions
@@ -54,13 +54,13 @@ const express = require('express');
   release                                                                       
   - Electrotherapy: TENS, ultrasound and laser to reduce pain and inflammation
   - Acupuncture: dry needling to relieve pain and reduce muscle tension         
-  - Neurological Physiotherapy: for animals with neurological conditions 
+  - Neurological Physiotherapy: for animals with neurological conditions        
   affecting movement                                                            
   - Post-Surgical Rehabilitation: structured programmes following orthopaedic or
    soft tissue surgery                                                          
-                  
+   
   ANIMALS TREATED:                                                              
-  Dogs — cruciate surgery, arthritis, soft tissue injuries, IVDD, gait 
+  Dogs — cruciate surgery, arthritis, soft tissue injuries, IVDD, gait          
   abnormalities, agility conditioning                                           
   Cats — arthritis, post-surgical recovery, neurological conditions, age-related
    mobility decline                                                             
@@ -102,7 +102,7 @@ const express = require('express');
   after rest, reluctance to jump, gait changes, slow recovery after surgery,    
   chronic pain.
   Q: Can physio be used alongside vet treatment? A: Yes — it works best as part 
-  of a coordinated care plan. Sindy communicates directly with your vet.
+  of a coordinated care plan. Sindy communicates directly with your vet.        
   Q: My dog just had cruciate surgery — when can physio start? A: Often within 
   days of surgery depending on vet guidance. Early physio reduces muscle loss   
   and speeds recovery.
@@ -110,29 +110,29 @@ const express = require('express');
   arthritis and reduced mobility are some of the most common patients and often 
   show dramatic improvements.
   Q: Is the free consultation really free? A: Yes — no commitment required.     
-  Q: Where are you based? A: Perth WA, fully mobile — Sindy comes to you.`;
+  Q: Where are you based? A: Perth WA, fully mobile — Sindy comes to you.`;     
                                                                                 
-  app.post('/chat', async (req, res) => {
+  app.post('/chat', async (req, res) => {                                       
     try {                                                                       
       const { messages } = req.body;
-
-      if (!messages || !Array.isArray(messages)) {                              
-        return res.status(400).json({ reply: 'Invalid request format.' });
+                                                                                
+      if (!messages || !Array.isArray(messages)) {
+        return res.status(400).json({ reply: 'Invalid request format.' });      
       }                                                                         
-                  
+   
       const response = await fetch('https://api.anthropic.com/v1/messages', {   
         method: 'POST',
-        headers: {                                                              
-          'Content-Type': 'application/json',
+        headers: {
+          'Content-Type': 'application/json',                                   
           'x-api-key': process.env.ANTHROPIC_API_KEY,
-          'anthropic-version': '2023-06-01'
+          'anthropic-version': '2023-06-01'                                     
         },                                                                      
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',                                   
-          max_tokens: 500,
+          max_tokens: 500,                                                      
           system: SYSTEM_PROMPT,
           messages: messages                                                    
-        })
+        })        
       });                                                                       
                   
       const data = await response.json();
@@ -140,23 +140,19 @@ const express = require('express');
       if (data.error) {
         console.error('Anthropic API error:', data.error);
         return res.status(500).json({ reply: 'Sorry, I could not get a response 
-  right now. Please try again.' });                                             
-      }
-                                                                                
+  right now. Please try again.' });
+      }                                                                         
+                  
       res.json({ reply: data.content?.[0]?.text || 'Sorry, I could not get a    
   response right now.' });
     } catch (err) {                                                             
       console.error('Server error:', err);
       res.status(500).json({ reply: 'Something went wrong. Please try again in a
-   moment.' });                                                                 
-    }
-  });                                                                           
-                  
-  app.get('/', (req, res) => res.send('Head To Tail Chatbot API is running!'));
+   moment.' });
+    }                                                                           
+  });             
 
+  app.get('/', (req, res) => res.send('Head To Tail Chatbot API is running!')); 
+   
   const PORT = process.env.PORT || 3000;                                        
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-                                                                                
-  Replace your server.js on GitHub with this — Render will auto-redeploy. The   
-  fix is mainly the broken string literals on the two error message lines, plus
-  general cleanup to prevent any other whitespace issues from the refactor.
