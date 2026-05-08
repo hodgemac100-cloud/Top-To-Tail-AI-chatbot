@@ -206,7 +206,9 @@ app.post('/chat', async (req, res) => {
       messages: messages.map(m => ({ role: m.role, content: m.content }))
     });
 
-    const reply = response.content[0]?.text || "Sorry, I couldn't generate a response.";
+    const raw = response.content[0]?.text || "Sorry, I couldn't generate a response.";
+    // Ensure numbered list items are separated by blank lines
+    const reply = raw.replace(/ (\d+\.) /g, '\n\n$1 ').trim();
     res.json({ reply });
   } catch (error) {
     console.error('Anthropic API error:', error);
