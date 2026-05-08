@@ -1,16 +1,16 @@
- const express = require('express');                                           
-  const cors = require('cors');
-                                                                                
-  const app = express();                                    
-
+const express = require('express');                                           
+  const cors = require('cors');                                                 
+   
+  const app = express();                                                        
+                  
   app.use(cors({
     origin: '*',
     methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type']
+    allowedHeaders: ['Content-Type']                                            
   }));
+                                                                                
+  app.use(express.json());
 
-  app.use(express.json());                                                      
-   
   const SYSTEM_PROMPT = `You are the friendly, knowledgeable assistant for Head 
   To Tail Animal Physiotherapy in Perth, Western Australia. You speak warmly and
    professionally — the way Sindy herself would. You give clear, honest, helpful
@@ -26,11 +26,11 @@
   more detail. Never use clinical jargon. Always end by encouraging the user to 
   book a free assessment or get in touch.
                                                                                 
-  THE BUSINESS:                          
-  Name: Head To Tail Animal Physiotherapy
-  Owner / Therapist: Sindy Rollins                                              
-  Email: info@headtotailphysio.com.au
-  Website: headtotailphysio.com.au                                              
+  THE BUSINESS:   
+  Name: Head To Tail Animal Physiotherapy                                       
+  Owner / Therapist: Sindy Rollins
+  Email: info@headtotailphysio.com.au                                           
+  Website: headtotailphysio.com.au
   Location: Perth, Western Australia — fully mobile service, Sindy comes to you 
   (home, stable, or property)                                                   
   Service area: Perth and surrounding regions
@@ -48,17 +48,17 @@
    care team.
 
   SERVICES:
-  - Therapeutic Exercise: tailored programmes to rebuild strength, restore      
+  - Therapeutic Exercise: tailored programmes to rebuild strength, restore 
   mobility and prevent re-injury                                                
-  - Manual Therapy: joint mobilisation, soft tissue massage and myofascial      
+  - Manual Therapy: joint mobilisation, soft tissue massage and myofascial 
   release                                                                       
   - Electrotherapy: TENS, ultrasound and laser to reduce pain and inflammation
   - Acupuncture: dry needling to relieve pain and reduce muscle tension         
-  - Neurological Physiotherapy: for animals with neurological conditions        
+  - Neurological Physiotherapy: for animals with neurological conditions 
   affecting movement                                                            
   - Post-Surgical Rehabilitation: structured programmes following orthopaedic or
    soft tissue surgery                                                          
-                                         
+                  
   ANIMALS TREATED:                                                              
   Dogs — cruciate surgery, arthritis, soft tissue injuries, IVDD, gait 
   abnormalities, agility conditioning                                           
@@ -66,93 +66,97 @@
    mobility decline                                                             
   Horses — back pain, tendon/ligament injuries, post-surgical recovery, 
   performance optimisation, gait abnormalities, rider biomechanics              
-  Other species — contact Sindy to check 
+  Other species — contact Sindy to check
                                                                                 
-  FIRST SESSION:                         
+  FIRST SESSION:  
   45–60 minutes. Full assessment of movement, posture, muscle strength and pain 
   response. Tailored treatment plan built. Owner welcome to stay throughout.    
-  Home exercise guidance given from session one.                                
+  Home exercise guidance given from session one.
                                                                                 
-  HOW MANY SESSIONS:                     
-  Varies. Some animals improve in 2–3 sessions. Chronic or post-surgical cases  
+  HOW MANY SESSIONS:
+  Varies. Some animals improve in 2–3 sessions. Chronic or post-surgical cases 
   may need several weeks. Sindy reassesses every session and keeps owners       
-  informed. No pressure to commit upfront.                                      
+  informed. No pressure to commit upfront.
                                                                                 
   DOES IT HURT: No. Techniques are always adapted to the animal's comfort and 
   tolerance.                                                                    
-            
+   
   VET REFERRAL: Not required. Owners can book directly. For post-surgical or    
   diagnosed conditions, Sindy always liaises with the treating vet first.       
-            
-  PRICING: Varies by treatment type and duration. Direct to email for a quote.  
-  Free initial consultation for all new clients.                                
-            
+   
+  PRICING: Varies by treatment type and duration. Contact Sindy directly for a  
+  quote. Free initial consultation for all new clients.                         
+   
   BOOKING: Contact form at headtotailphysio.com.au/contact or email             
   info@headtotailphysio.com.au                                                  
-            
+   
   VET REFERRALS (for professionals): Submit online at                           
   headtotailphysio.com.au/referrals or download the PDF form. Sindy contacts the
    owner within 24 hours and sends progress reports throughout treatment.
                                                                                 
-  KEY FAQs:                              
-  Q: What is animal physiotherapy? A: Evidence-based techniques — manual
-  therapy, therapeutic exercise, hydrotherapy, electrotherapy — to restore
+  KEY FAQs:       
+  Q: What is animal physiotherapy? A: Evidence-based techniques — manual 
+  therapy, therapeutic exercise, hydrotherapy, electrotherapy — to restore      
   movement, reduce pain and improve quality of life.
-  Q: How do I know if my animal needs physio? A: Reduced activity, stiffness 
+  Q: How do I know if my animal needs physio? A: Reduced activity, stiffness    
   after rest, reluctance to jump, gait changes, slow recovery after surgery,    
   chronic pain.
   Q: Can physio be used alongside vet treatment? A: Yes — it works best as part 
-  of a coordinated care plan. Sindy communicates directly with your vet.        
+  of a coordinated care plan. Sindy communicates directly with your vet.
   Q: My dog just had cruciate surgery — when can physio start? A: Often within 
   days of surgery depending on vet guidance. Early physio reduces muscle loss   
-  and speeds recovery.                   
+  and speeds recovery.
   Q: Is physio suitable for older animals? A: Absolutely. Senior animals with   
   arthritis and reduced mobility are some of the most common patients and often 
   show dramatic improvements.
-  Q: Is the free consultation really free? A: Yes — no commitment required.
+  Q: Is the free consultation really free? A: Yes — no commitment required.     
   Q: Where are you based? A: Perth WA, fully mobile — Sindy comes to you.`;
                                                                                 
   app.post('/chat', async (req, res) => {
     try {                                                                       
-      const { messages } = req.body;     
+      const { messages } = req.body;
 
-      if (!messages || !Array.isArray(messages)) {
+      if (!messages || !Array.isArray(messages)) {                              
         return res.status(400).json({ reply: 'Invalid request format.' });
       }                                                                         
-            
+                  
       const response = await fetch('https://api.anthropic.com/v1/messages', {   
-        method: 'POST',                  
-        headers: {
+        method: 'POST',
+        headers: {                                                              
           'Content-Type': 'application/json',
-          'x-api-key': process.env.ANTHROPIC_API_KEY,                           
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
           'anthropic-version': '2023-06-01'
         },                                                                      
-        body: JSON.stringify({           
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 500,                                                      
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',                                   
+          max_tokens: 500,
           system: SYSTEM_PROMPT,
           messages: messages                                                    
-        })                               
-      });
-
+        })
+      });                                                                       
+                  
       const data = await response.json();
 
       if (data.error) {
         console.error('Anthropic API error:', data.error);
-        return res.status(500).json({ reply: 'Sorry I could not get a response  
-  right now. Please try again.' });
-      }                                                                         
-                                         
-      res.json({ reply: data.content?.[0]?.text || 'Sorry I could not get a     
+        return res.status(500).json({ reply: 'Sorry, I could not get a response 
+  right now. Please try again.' });                                             
+      }
+                                                                                
+      res.json({ reply: data.content?.[0]?.text || 'Sorry, I could not get a    
   response right now.' });
     } catch (err) {                                                             
       console.error('Server error:', err);
       res.status(500).json({ reply: 'Something went wrong. Please try again in a
-   moment.' });
+   moment.' });                                                                 
     }
-  });
+  });                                                                           
+                  
+  app.get('/', (req, res) => res.send('Head To Tail Chatbot API is running!'));
 
-  app.get('/', (req, res) => res.send('Head To Tail Chatbot API is running!')); 
-            
   const PORT = process.env.PORT || 3000;                                        
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+                                                                                
+  Replace your server.js on GitHub with this — Render will auto-redeploy. The   
+  fix is mainly the broken string literals on the two error message lines, plus
+  general cleanup to prevent any other whitespace issues from the refactor.
